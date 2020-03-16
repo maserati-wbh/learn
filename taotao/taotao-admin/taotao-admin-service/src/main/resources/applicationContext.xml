@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:c="http://www.springframework.org/schema/c"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+      				  http://www.springframework.org/schema/beans/spring-beans.xsd
+      				  http://www.springframework.org/schema/tx
+      				  http://www.springframework.org/schema/tx/spring-tx.xsd
+      				  http://www.springframework.org/schema/aop
+      				  http://www.springframework.org/schema/aop/spring-aop.xsd
+      				  http://www.springframework.org/schema/context
+      				  http://www.springframework.org/schema/context/spring-context.xsd">
+  
+  	<!-- 配置数据源 -->
+  	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"	
+  			destroy-method="close"/>
+  	
+  	<!-- 配置SqlSessionFactory -->
+  	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+  		<!-- 设置数据源 -->
+   		<property name="dataSource" ref="dataSource"/>
+   		<!-- 设置类型别名 (采用包扫描) -->
+   		<property name="typeAliasesPackage" value="com.taotao.admin.pojo"/>
+   		<!-- 设置SQL映射文件 -->
+   		<property name="mapperLocations" value="classpath:mappers/**/*.xml"/>
+   		<!-- 设置mybatis-config.xml -->
+   		<property name="configLocation" value="classpath:mybatis-config.xml"/>
+  	</bean>
+  	
+  	<!-- 配置数据访问接口的代理对象 (批量配置)
+		 到基础包下扫描所有的数据访问接口，再创建它们的代理对象，然后交给Spring容器
+		 bean的id: 默认为接口的类名，首字母小写
+	 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- 设置数据访问接口类 -->
+		<property name="basePackage" value="com.taotao.admin.mapper"/>
+	</bean>
+	
+	<!-- 配置通用Mapper采用包扫描 -->
+	<bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- 设置数据访问接口类 -->
+		<property name="basePackage" value="com.taotao.admin.mapper"/>
+	</bean>
+	
+	<!-- 配置数据源事务管理器(DataSourceTransactionManager) -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<!-- 配置开启事务注解驱动 -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+	<!-- 配置开启组件扫描 -->
+	<context:component-scan base-package="com.taotao.admin.service.impl"/>
+</beans>

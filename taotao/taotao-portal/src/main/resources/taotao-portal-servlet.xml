@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:c="http://www.springframework.org/schema/c"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+      				  http://www.springframework.org/schema/beans/spring-beans.xsd
+      				  http://www.springframework.org/schema/mvc
+      				  http://www.springframework.org/schema/mvc/spring-mvc.xsd
+      				  http://code.alibabatech.com/schema/dubbo 
+      				  http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+      				  http://www.springframework.org/schema/context
+      				  http://www.springframework.org/schema/context/spring-context.xsd">
+  
+	<!-- 配置开启组件扫描 -->
+	<context:component-scan base-package="com.taotao.portal"/>
+	
+	<!-- 开启MVC注解驱动 -->
+	<mvc:annotation-driven/>
+	
+	<!-- 配置视图解析器 -->
+	<mvc:view-resolvers>
+		<mvc:jsp prefix="/WEB-INF/views/" suffix=".jsp"/>
+	</mvc:view-resolvers>
+	
+	<!-- 配置静态资源用默认的Servlet来处理 -->
+	<mvc:default-servlet-handler/>
+	
+	<!-- 配置拦截器 -->
+	<mvc:interceptors>
+		<!-- 配置登录拦截器 -->
+		<mvc:interceptor>
+			<!-- 配置拦截的请求地址 -->
+			<mvc:mapping path="/order/**"/>
+			<!-- 配置拦截器Bean -->
+			<bean class="com.taotao.portal.interceptor.LoginInterceptor"/>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
+	
+	
+	
+	<!-- ############# 配置Dubbo的消费者 ############### -->
+	<!-- 配置当前应用的名称 -->
+  	<dubbo:application name="taotao-portal"/>
+  	
+  	<!-- zookeeper作为注册中心,发现服务地址 -->
+  	<dubbo:registry protocol="zookeeper" address="192.168.12.135:2181"/>
+	  	
+ 	<!-- 引用服务(生成远程服务代理)，会产生接口的代理对象 ，可以和本地bean一样使用 -->
+ 	<dubbo:reference interface="com.taotao.admin.service.ContentService"
+ 		id="contentService" timeout="60000"/>
+ 	<dubbo:reference interface="com.taotao.sso.service.UserService"
+ 		id="userService" timeout="60000"/>
+ 	<dubbo:reference interface="com.taotao.cart.service.CartService"
+ 		id="cartService" timeout="60000"/>
+ 	<dubbo:reference interface="com.taotao.admin.service.ItemService"
+ 		id="itemService" timeout="60000"/>
+    <dubbo:reference interface="com.taotao.order.service.OrderService"
+ 		id="orderService" timeout="60000"/>
+ 	
+
+</beans>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taotao.sso.mapper.UserMapper">
+	<!-- 根据条件统计查询 -->
+	<select id="count" resultType="int">
+		select count(*) from tb_user where
+		<choose>
+			<when test="username != null and username !=''">
+				username = #{username}
+			</when>
+			<when test="phone != null and phone !=''">
+				phone = #{phone}
+			</when>
+			<otherwise>
+				email = #{email}
+			</otherwise>
+		</choose>
+	</select>
+</mapper>

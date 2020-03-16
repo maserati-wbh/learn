@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+      				  http://www.springframework.org/schema/beans/spring-beans.xsd
+      				  http://www.springframework.org/schema/context
+      				  http://www.springframework.org/schema/context/spring-context.xsd
+      				  http://code.alibabatech.com/schema/dubbo 
+      				  http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+  
+  	<!-- ############# 配置Dubbo服务的提供者 ############### -->
+  	<!-- 配置当前应用的名称 -->
+  	<dubbo:application name="taotao-cart-service"/>
+  	
+  	<!-- zookeeper作为注册中心,提供服务地址 -->
+  	<dubbo:registry protocol="zookeeper" address="192.168.12.135:2181"/>
+  	
+  	<!-- 配置服务用dubbo协议在20883端口暴露服务 -->
+  	<dubbo:protocol name="dubbo" port="20883"/>
+  	
+  	<!-- 暴露服务 -->
+  	<dubbo:service interface="com.taotao.cart.service.CartService" 
+  			ref="cartServiceImpl"/>
+  	
+  	
+</beans>

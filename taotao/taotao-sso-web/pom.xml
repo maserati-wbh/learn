@@ -1,0 +1,94 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+		 					 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.taotao</groupId>
+		<artifactId>taotao-parent</artifactId>
+		<version>1.0.0-RELEASE</version>
+	</parent>
+	<artifactId>taotao-sso-web</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>war</packaging>
+	
+	<!-- 配置依赖关系 -->
+	<dependencies>
+		<!-- 配置Web启动器 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+				<!-- 排除jar的冲突 log4j-over-slf4j与dubbo的jar包有冲 -->
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>log4j-over-slf4j</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- 配置servlet-api、jsp-api、el-api依赖(jsp视图) -->
+       	<dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-jasper</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- 配置jstl依赖 -->
+		<dependency>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+		</dependency>
+		<!-- tomcat-juli -->
+		<dependency>
+		    <groupId>org.apache.tomcat</groupId>
+		    <artifactId>tomcat-juli</artifactId>
+		</dependency>
+        <!-- 配置tomcat启动器(tomcat容器相关jar不打到war包中) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- dubbo -->
+		<dependency>
+		    <groupId>com.alibaba</groupId>
+		    <artifactId>dubbo</artifactId>
+       </dependency>
+       <!-- taotao-sso-interface -->
+       <dependency>
+       		<groupId>com.taotao</groupId>
+       		<artifactId>taotao-sso-interface</artifactId>
+       		<version>1.0.0-SNAPSHOT</version>
+       </dependency>
+        <!-- zookeeper分布式协调服务 -->
+		<dependency>
+			<groupId>org.apache.zookeeper</groupId>
+			<artifactId>zookeeper</artifactId>
+		</dependency>
+		<!-- zkclient(zookeeper客户端) -->
+		<dependency>
+			<groupId>com.github.sgroschupf</groupId>
+			<artifactId>zkclient</artifactId>
+		</dependency>
+		 <!-- taotao-common -->
+		<dependency>
+			<groupId>com.taotao</groupId>
+			<artifactId>taotao-common</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
+		<!-- taotao-cart-interface -->
+       <dependency>
+       		<groupId>com.taotao</groupId>
+       		<artifactId>taotao-cart-interface</artifactId>
+       		<version>1.0.0-SNAPSHOT</version>
+       </dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<!-- SpringBoot的Maven插件(集成运行与打包) -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>

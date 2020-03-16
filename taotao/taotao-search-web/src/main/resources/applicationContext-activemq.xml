@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:c="http://www.springframework.org/schema/c"
+  xmlns:jms="http://www.springframework.org/schema/jms"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+      				  http://www.springframework.org/schema/beans/spring-beans.xsd
+      				  http://www.springframework.org/schema/jms
+      				  http://www.springframework.org/schema/jms/spring-jms.xsd
+      				  http://www.springframework.org/schema/context
+      				  http://www.springframework.org/schema/context/spring-context.xsd">
+  
+  	
+  	<!-- 加载属性文件 -->
+  	<context:property-placeholder location="classpath:activemq.properties"/>
+  	
+  	<!-- ########### ActiveMQ的通用的配置 ############ -->
+  	<!-- 配置ActiveMQConnectionFactory -->
+  	<bean id="activeMQConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+  		<!-- 设置消息中间件服务地址 -->
+  		<constructor-arg value="${activemq.brokerURL}"/>
+  	</bean>
+  	<!-- 把ActiveMQ的连接工厂交由Spring的jms管理 -->
+  	<bean id="connectionFactory" class="org.springframework.jms.connection.SingleConnectionFactory">
+  		<!-- 设置目标连接工厂 -->
+  		<property name="targetConnectionFactory" ref="activeMQConnectionFactory"/>
+  	</bean>
+  	
+  	
+  	<!-- ########### 消息消费者的配置 ############ -->
+  	<!-- 定义消息监听器容器 
+  		connection-factory: 连接工厂
+  		acknowledge: transacted消息事务
+  		destination-type: 目标类型(消息模式)
+  		concurrency: 并发数
+  	-->
+  	<jms:listener-container connection-factory="connectionFactory"
+  							acknowledge="transacted"
+  							concurrency="1"
+  							destination-type="topic">
+  		 <!-- 定义消息监听器 destination: 指定主题名称 -->
+  		 <jms:listener destination="item.topic" ref="itemMessageListener"/>
+  	</jms:listener-container>
+  	<!-- 配置自定义消息监听器 -->
+  	<bean id="itemMessageListener" class="com.taotao.search.listener.ItemMessageListener"/>
+  	
+</beans>

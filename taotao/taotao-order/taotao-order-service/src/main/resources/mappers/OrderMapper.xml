@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taotao.order.mapper.OrderMapper">
+	
+	<!-- 保存订单 -->
+	<insert id="save">
+		INSERT INTO tb_order (order_id, payment, payment_type, post_fee, status, create_time, update_time
+		, payment_time, consign_time, end_time, close_time, shipping_name, shipping_code, user_id, buyer_message, buyer_nick, buyer_rate) 
+		VALUES (#{orderId}, #{payment}, #{paymentType}, #{postFee}, #{status}, #{createTime}, #{updateTime}
+		, #{paymentTime}, #{consignTime}, #{endTime}, #{closeTime}, #{shippingName}, #{shippingCode}, #{userId}, #{buyerMessage}, #{buyerNick}, #{buyerRate});
+		
+		INSERT INTO tb_order_item (item_id, order_id, num, title, price, total_fee, pic_path) VALUES 
+		<foreach collection="orderItems" item="item" separator="," >
+			(#{item.itemId}, #{orderId}, #{item.num}, #{item.title}, #{item.price}, #{item.totalFee}, #{item.picPath})
+		</foreach>
+		;
+
+		INSERT INTO tb_order_shipping (order_id, receiver_name, receiver_phone, receiver_mobile, receiver_state, receiver_city, receiver_district, receiver_address, receiver_zip, created, updated) 
+		VALUES (#{orderId}, #{orderShipping.receiverName}, #{orderShipping.receiverPhone}, #{orderShipping.receiverMobile}
+		, #{orderShipping.receiverState}, #{orderShipping.receiverCity}, #{orderShipping.receiverDistrict}, #{orderShipping.receiverAddress}, #{orderShipping.receiverZip}, now(), now());
+	</insert>
+	
+	<!-- 配置结果集映射ResultSet Mapping(resultMap) -->
+	<resultMap type="Order" id="orderMap" autoMapping="true">
+		<!-- 映射主键列 -->
+		<id column="order_id" property="orderId"/>
+		<!-- 订单 与 订单运送  存在一对一关联 -->
+		<association property="orderShipping"
+		 			  column="order_id" 
+		 			  javaType="OrderShipping"
+		 			  fetchType="eager"
+		 			  select="com.taotao.order.mapper.OrderShippingMapper.findOrderShippingByOrderId"/>
+		 			  
+		<!-- 订单 与  订单商品 存在一对多关联
+			property: 指定Order中属性名
+			column: 指定tb_order表中的主键列的列名
+			javaType: 指定orderItems属性的java类型
+			ofType: 指定集合中的元素类型
+			select: 指定查询语句
+		 -->
+		<collection property="orderItems" 
+		            column="order_id" 
+		            javaType="list" 
+		            ofType="OrderItem"
+		            fetchType="eager"
+		            select="com.taotao.order.mapper.OrderItemMapper.findOrderItemByOrderId"/>
+		
+		
+	</resultMap>
+	
+	<!-- 根据订单编号查询订单 -->
+	<select id="get" resultMap="orderMap">
+		select * from tb_order where order_id = #{orderId}
+	</select>
+	
+	<!-- 关闭定单 -->
+	<update id="closeOrder">
+		UPDATE tb_order SET
+		status = 6,
+		update_time = now(),
+		close_time = now(),
+		end_time = now()
+		WHERE status = 1 AND payment_type = 1 AND create_time &lt;= #{date}
+	</update>
+</mapper>

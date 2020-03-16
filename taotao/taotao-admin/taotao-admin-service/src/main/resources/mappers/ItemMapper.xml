@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taotao.admin.mapper.ItemMapper">
+	
+	<!--根据条件查询商品  -->
+	<select id="findAll" resultType="map">
+		SELECT i.id, i.title, c.`name`, i.sell_point as sellPoint,
+		i.price, i.num, i.barcode, i.`status`, i.created, i.image,
+		i.updated,i.cid FROM `tb_item` as i, tb_item_cat as c where i.cid = c.id
+		<!-- 添加查询条件 -->
+		<if test="item != null">
+			<!-- 判断标题 -->
+			<if test="item.title != null and item.title !=''">
+				and i.title like CONCAT('%',#{item.title},'%')
+			</if>
+		</if>
+	</select>
+</mapper>

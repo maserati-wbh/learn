@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taotao.order.mapper.OrderShippingMapper">
+	
+	<!-- 根据订单id查询订单物流信息 -->
+	<select id="findOrderShippingByOrderId" resultType="OrderShipping">
+		SELECT * FROM `tb_order_shipping` where order_id = #{orderId}
+	</select>
+</mapper>

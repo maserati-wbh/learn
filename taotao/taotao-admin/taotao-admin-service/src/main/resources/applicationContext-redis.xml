@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:c="http://www.springframework.org/schema/c"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+      				  http://www.springframework.org/schema/beans/spring-beans.xsd
+      				  http://www.springframework.org/schema/context
+      				  http://www.springframework.org/schema/context/spring-context.xsd">
+  
+  
+  	<!-- 配置加载的属性文件 -->
+  	<context:property-placeholder location="classpath:redis.properties"/>
+  	
+  	<!-- ############## Redis单机版配置 ############# -->
+  	<!-- 配置连接池配置信息对象 -->
+  	<bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig"
+  		  p:maxTotal="20"/>
+  	<!-- 配置JedisPool -->
+  	<bean id="jedisPool" class="redis.clients.jedis.JedisPool"
+  		  c:_0-ref="poolConfig"
+  		  c:host="${jedisPool.host}"
+  		  c:port="${jedisPool.port}"/>
+  	
+  	<!-- ############## Redis集群版配置 ############# -->
+  	<!-- 配置JedisCluster -->
+  	<bean id="jedisCluster" class="redis.clients.jedis.JedisCluster">
+  		<constructor-arg>
+  			<set>
+  				<bean class="redis.clients.jedis.HostAndPort"
+  					  c:_0="${cluster.redis1.host}"
+  					  c:_1="${cluster.redis1.port}"/>
+  				<bean class="redis.clients.jedis.HostAndPort"
+  					  c:_0="${cluster.redis2.host}"
+  					  c:_1="${cluster.redis2.port}"/>
+  				<bean class="redis.clients.jedis.HostAndPort"
+  					  c:_0="${cluster.redis3.host}"
+  					  c:_1="${cluster.redis3.port}"/>
+  				<bean class="redis.clients.jedis.HostAndPort"
+  					  c:_0="${cluster.redis4.host}"
+  					  c:_1="${cluster.redis4.port}"/>
+  				<bean class="redis.clients.jedis.HostAndPort"
+  					  c:_0="${cluster.redis5.host}"
+  					  c:_1="${cluster.redis5.port}"/>
+  				<bean class="redis.clients.jedis.HostAndPort"
+  					  c:_0="${cluster.redis6.host}"
+  					  c:_1="${cluster.redis6.port}"/>
+  			</set>
+  		</constructor-arg>
+  	</bean>
+  	
+  	<!-- 配置单机版 -->
+    <!-- 	<bean id="redisService" class="com.taotao.common.redis.impl.JedisPoolServiceImpl"/> -->
+  	
+  	<!-- 配置集群版 -->
+  	<bean id="redisService" class="com.taotao.common.redis.impl.JedisClusterServiceImpl"/>
+  	
+</beans>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:c="http://www.springframework.org/schema/c"
+  xmlns:jms="http://www.springframework.org/schema/jms"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+      				  http://www.springframework.org/schema/beans/spring-beans.xsd
+      				  http://www.springframework.org/schema/jms
+      				  http://www.springframework.org/schema/jms/spring-jms.xsd
+      				  http://www.springframework.org/schema/context
+      				  http://www.springframework.org/schema/context/spring-context.xsd">
+  
+  	
+  	<!-- ########### ActiveMQ通用的配置 ############ -->
+  	<!-- 配置ActiveMQConnectionFactory -->
+  	<bean id="activeMQConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+  		<!-- 设置消息中间件服务地址 -->
+  		<constructor-arg value="${activemq.brokerURL}"/>
+  	</bean>
+  	<!-- 把ActiveMQ的连接工厂交由Spring的jms管理 -->
+  	<bean id="connectionFactory" class="org.springframework.jms.connection.SingleConnectionFactory">
+  		<!-- 设置目标连接工厂 -->
+  		<property name="targetConnectionFactory" ref="activeMQConnectionFactory"/>
+  	</bean>
+  	
+  	
+  	<!-- ########### 消息生产者的配置 ############ -->
+  	<!-- 定义jmsTemplate来发送消息 -->
+  	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+  		<!-- 设置连接工厂 -->
+  		<property name="connectionFactory" ref="connectionFactory"/>
+  		<!-- 设置默认的目标(发布与订阅) -->
+  		<property name="defaultDestination" ref="topic"/>
+  		<!-- 设置开启消息事务 -->
+  		<property name="sessionTransacted" value="true"/>
+  	</bean>
+  	<!-- 定义发布与订阅模式 -->
+  	<bean id="topic" class="org.apache.activemq.command.ActiveMQTopic">
+  		<!-- 设置主题的名称 -->
+  		<constructor-arg value="item.topic"/>
+  	</bean>
+  	
+</beans>
