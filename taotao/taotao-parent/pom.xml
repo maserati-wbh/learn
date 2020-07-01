@@ -49,7 +49,7 @@
 		<activemq.version>5.14.5</activemq.version>
 		<freemarker.version>2.3.26-incubating</freemarker.version>
 		<joda-time.version>2.5</joda-time.version>
-		<quartz.version>2.2.2</quartz.version>
+		<quartz.version>2.3.2</quartz.version>
 	</properties>
 	
 	<!-- 依赖管理配置(用于锁定指定版本) -->
